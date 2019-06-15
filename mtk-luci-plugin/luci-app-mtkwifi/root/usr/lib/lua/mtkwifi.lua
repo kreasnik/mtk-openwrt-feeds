@@ -633,6 +633,15 @@ function mtkwifi.__setup_vifs(cfgs, devname, mainidx, subidx)
     return vifs
 end
 
+function apcli_udhcpc(vifname)
+    mtkwifi.debug("udhcpc get ip")
+	local apcli0 = mtkwifi.read_pipe("ifconfig apcli0 | grep \"inet addr\" 2>/dev/null")
+	if apcli0 then
+        mtkwifi.debug("apcli0 is empty!!!")
+        os.execute("udhcpc -i "..vifname)
+	end
+end
+
 function mtkwifi.__setup_apcli(cfgs, devname, mainidx, subidx)
     local l1dat, l1 = mtkwifi.__get_l1dat()
     local dridx = l1dat and l1.DEV_RINDEX

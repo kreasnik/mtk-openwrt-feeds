@@ -766,6 +766,15 @@ function apcli_cfg(dev, vif)
     luci.http.redirect(luci.dispatcher.build_url("admin", "mtk", "wifi", "apcli_cfg_view", dev, vif))
 end
 
+function apcli_disable_dhcp()
+    local brvifs = mtkwifi.__trim(mtkwifi.read_pipe("uci get dhcp.lan.ignore"))
+    if brvifs == 1 then
+        os.execute("uci set dhcp.lan.ignore=1")
+        os.execute("uci commit")
+        os.execute("/etc/init.d/network restart")
+    end
+end
+
 function apcli_connect(dev, vif)
     -- dev_vif can be
     --  1. mt7620.apcli0         # simple case
@@ -778,20 +787,12 @@ function apcli_connect(dev, vif)
     local profiles = mtkwifi.search_dev_and_profile()
     mtkwifi.debug(profiles[devname])
     assert(profiles[devname])
-
+    -- apcli_disable_dhcp()
     local cfgs = mtkwifi.load_profile(profiles[devname])
     cfgs.ApCliEnable = "1"
     mtkwifi.save_profile(cfgs, profiles[devname])
 
     os.execute("ifconfig "..vifname.." up")
-    local brvifs = mtkwifi.__trim(mtkwifi.read_pipe("uci get network.lan.ifname"))
-    if not string.match(brvifs, vifname) then
-        brvifs = brvifs.." "..vifname
-        nixio.syslog("debug", "add "..vifname.." into lan")
-        os.execute("uci set network.lan.ifname=\""..brvifs.."\"")
-        os.execute("uci commit")
-        os.execute("ubus call network.interface.lan add_device \"{\\\"name\\\":\\\""..vifname.."\\\"}\"")
-    end
 
     os.execute("iwpriv "..vifname.." set MACRepeaterEn="..cfgs.MACRepeaterEn)
     os.execute("iwpriv "..vifname.." set ApCliEnable=0")
@@ -808,6 +809,18 @@ function apcli_connect(dev, vif)
     end
     os.execute("iwpriv "..vifname.." set ApCliSsid=\""..cfgs.ApCliSsid.."\"")
     os.execute("iwpriv "..vifname.." set ApCliEnable=1")
+    apcli_udhcpc(vifname)
+    local brvifs = mtkwifi.__trim(mtkwifi.read_pipe("uci get network.lan.ifname"))
+    if not string.match(brvifs, vifname) then
+        brvifs = brvifs.." "..vifname
+        nixio.syslog("debug", "add "..vifname.." into lan")
+        os.execute("uci set network.lan.ifname=\""..brvifs.."\"")
+        os.execute("uci commit")
+        os.execute("ubus call network.interface.lan add_device \"{\\\"name\\\":\\\""..vifname.."\\\"}\"")
+    end
+	os.execute("uci set wireless."..devname..".channel="..cfgs.Channel)
+	mtkwifi.debug("debug", "uci set wireless."..devname..".channel="..cfgs.Channel)
+	os.execute("uci commit")
     luci.http.redirect(luci.dispatcher.build_url("admin", "mtk", "wifi"))
 end
 

@@ -116,7 +116,7 @@ local devs = mtkwifi.get_all_devs()
                         <% if dev.apcli.status == "Connected" then %>
                         <input class="cbi-button cbi-button-remove" style="width:100px" title="Reload WiFi network" value="Disconnect" type="button" onclick='wifi_reload("<%=luci.dispatcher.build_url("admin", "mtk", "wifi", "apcli_disconnect", dev.devname, dev.apcli.vifname)%>")' />
                         <% else %>
-                        <!-- <input class="cbi-button cbi-button-reload" style="width:100px" title="Reload WiFi network" value="Connect" type="button" onclick='wifi_reload("<%=luci.dispatcher.build_url("admin", "mtk", "wifi", "apcli_connect", dev.devname,dev.apcli.vifname)%>")' /> -->
+                        <input class="cbi-button cbi-button-reload" style="width:100px" title="Reload WiFi network" value="Connect" type="button" onclick='wifi_reload("<%=luci.dispatcher.build_url("admin", "mtk", "wifi", "apcli_connect", dev.devname,dev.apcli.vifname)%>")' />
                         <% end %>
 
                         <input class="cbi-button cbi-button-edit" style="width:100px" title="Configure WiFi device" value="Config" type="button" onclick="location.href='<%=luci.dispatcher.build_url("admin", "mtk", "wifi", "apcli_cfg_view", dev.devname, dev.apcli.vifname)%>'" />
