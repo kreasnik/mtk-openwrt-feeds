@@ -15,12 +15,13 @@ HTDOCS = /www
 LUA_LIBRARYDIR = /usr/lib/lua
 LUCI_LIBRARYDIR = $(LUA_LIBRARYDIR)/luci
 
+PO2LMO:=$(BUILD_DIR)/luci/build/po2lmo
 
 define Package/mtk-luci-plugin
   SECTION:=MTK Properties
   CATEGORY:=MTK Properties
   SUBMENU:=Misc
-  DEPENDS:=+lua
+  DEPENDS:=+lua +wget.
   TITLE:=MTK's LuCI plugins.
   VERSION:=$(PKG_RELEASE)-$(REVISION)
 endef
@@ -69,6 +70,8 @@ endef
 define Package/mtk-luci-plugin/install
 	$(call Package/common/install,$(1),luci-app-mtkwifi)
 	$(call Package/common/install,$(1),luci-app-webconsole)
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(PO2LMO) ./po/zh-cn/mtkwifi.po $(1)/usr/lib/lua/luci/i18n/mtkwifi.zh-cn.lmo
 endef
 
 
