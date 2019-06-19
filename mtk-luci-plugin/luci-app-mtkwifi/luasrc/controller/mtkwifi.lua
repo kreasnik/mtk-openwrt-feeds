@@ -838,7 +838,7 @@ function apcli_disconnect(dev, vif)
     assert(profiles[devname])
 
     local cfgs = mtkwifi.load_profile(profiles[devname])
-    cfgs.ApCliEnable = "1"
+    cfgs.ApCliEnable = "0"
     mtkwifi.save_profile(cfgs, profiles[devname])
 
     os.execute("iwpriv "..vifname.." set ApCliEnable=0")

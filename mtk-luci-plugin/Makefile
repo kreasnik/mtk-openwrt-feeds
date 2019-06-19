@@ -21,7 +21,7 @@ define Package/mtk-luci-plugin
   SECTION:=MTK Properties
   CATEGORY:=MTK Properties
   SUBMENU:=Misc
-  DEPENDS:=+lua +wget.
+  DEPENDS:=+lua
   TITLE:=MTK's LuCI plugins.
   VERSION:=$(PKG_RELEASE)-$(REVISION)
 endef
@@ -63,6 +63,10 @@ define Package/common/install
 	if [ -d $(2)/src ]; then \
 	  $(call Build/Install/Default) \
 	  $(CP) ./$(PKG_INSTALL_DIR)/* $(1)/; \
+	else true; fi
+	if [ -d ./build ]; then \
+	  mkdir -p $(BUILD_DIR)/luci/build/; \
+	  cp -pR ./build/* $(BUILD_DIR)/luci/build/; \
 	else true; fi
 endef
 

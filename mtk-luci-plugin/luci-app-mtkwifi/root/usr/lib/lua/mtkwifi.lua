@@ -705,13 +705,25 @@ function mtkwifi.get_all_devs()
             devs[i].apcli = {}
             devs[i].devname = devname
             devs[i].profile = profile
-            local tmp = ""
-            tmp = string.split(devname, ".")
-            devs[i].maindev = tmp[1]
-            devs[i].mainidx = tonumber(tmp[2]) or 1
-            devs[i].subdev = devname
-            devs[i].subidx = string.match(tmp[3] or "", "(%d+)")=="2" and 2 or 1
-            devs[i].devband = tonumber(tmp[3])
+            if devname == "mt7615e5" then
+                devs[i].maindev = devname
+                devs[i].mainidx = 2
+                devs[i].subdev = devname
+                devs[i].subidx = 1
+            elseif devname == "mt7615e2" then
+                devs[i].maindev = devname
+                devs[i].mainidx = 1
+                devs[i].subdev = devname
+                devs[i].subidx = 1
+            else
+                local tmp = ""
+                tmp = string.split(devname, ".")
+                devs[i].maindev = tmp[1]
+                devs[i].mainidx = tonumber(tmp[2]) or 1
+                devs[i].subdev = devname
+                devs[i].subidx = string.match(tmp[3] or "", "(%d+)")=="2" and 2 or 1
+                devs[i].devband = tonumber(tmp[3])
+            end
             if devs[i].devband then
                 devs[i].multiprofile = true
                 devs[i].dbdc = true
